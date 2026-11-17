@@ -33,15 +33,21 @@ The ESP32 only supports 2.4 GHz WiFi networks.
 
 ## Dependencies
 
+> [!IMPORTANT]
+> Install the libraries from the Arduino IDE Library Manager
+
 - [ESP32 Arduino core](https://github.com/espressif/arduino-esp32) (tested with 3.3.12), board `ESP32S3 Dev Module` (`esp32:esp32:esp32s3`)
-- Libraries (install from the Arduino IDE Library Manager):
+- Libraries:
   - `Adafruit SSD1306`
   - `Adafruit GFX Library`
   - `ArduinoJson` by Benoit Blanchon (v7)
 
 ## WiFi credentials
 
-Credentials are not stored in the source code. They are read from `wifi.txt` at compile time (by `wifi_utils.cpp`), which is git-ignored.
+> [!IMPORTANT]
+> Credentials are not stored in the source code. They are read from
+> `wifi.txt` at compile time (by `wifi_utils.cpp`), which is
+> git-ignored.
 
 ```sh
 cp wifi.example.txt wifi.txt
