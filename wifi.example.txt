@@ -1,0 +1,5 @@
+// WiFi credentials, included into clock_weather.ino at compile time.
+// Copy this file to wifi.txt (git-ignored) and replace the values.
+// Format: two C string literals separated by a comma: "SSID", "password"
+// Escape any " or \ in the values with a backslash.
+"MY_SSID", "MY_PASSWORD"

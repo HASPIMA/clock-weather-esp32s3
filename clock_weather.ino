@@ -34,8 +34,17 @@ bool initOled() {
 
 // --- Networking Configuration ---
 // The ESP32 only works on 2.4 GHz
-const char* ssid = "WIFI4614";
-const char* password = "nxfw9794(";
+// Credentials are read from wifi.txt at compile time (git-ignored; see wifi.example.txt)
+#if !__has_include("wifi.txt")
+#error "wifi.txt not found: copy wifi.example.txt to wifi.txt and fill in your network credentials"
+#endif
+const char* const wifiCredentials[] = {
+#include "wifi.txt"
+};
+static_assert(sizeof(wifiCredentials) / sizeof(wifiCredentials[0]) == 2,
+              "wifi.txt must contain exactly two strings: \"SSID\", \"password\"");
+const char* ssid = wifiCredentials[0];
+const char* password = wifiCredentials[1];
 
 // Since wifi is global we may need to protect its access.
 // Maybe this won't be necessary in the future if we do it in parallel
@@ -323,8 +332,12 @@ void drawHourlyChart(const WeatherData& w, int currentHour, int16_t x0, int16_t 
   }
   float range = (tMax - tMin) < 0.1f ? 0.1f : (tMax - tMin);
 
-  auto px = [&](uint8_t i) { return (int16_t)(x0 + (int32_t)i * (width - 1) / (w.hourlyCount - 1)); };
-  auto py = [&](uint8_t i) { return (int16_t)(y0 + height - 1 - (w.hourly[i] - tMin) * (height - 1) / range); };
+  auto px = [&](uint8_t i) {
+    return (int16_t)(x0 + (int32_t)i * (width - 1) / (w.hourlyCount - 1));
+  };
+  auto py = [&](uint8_t i) {
+    return (int16_t)(y0 + height - 1 - (w.hourly[i] - tMin) * (height - 1) / range);
+  };
 
   for (uint8_t i = 1; i < w.hourlyCount; i++) {
     display.drawLine(px(i - 1), py(i - 1), px(i), py(i), SSD1306_WHITE);
