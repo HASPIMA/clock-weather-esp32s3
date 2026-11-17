@@ -100,7 +100,8 @@ void loop() {
 
 // --- TASK: CONNECT WIFI & SYNC NTP ---
 void taskSyncTime(void* pvParameters) {
-  Serial.println("[Sync] Starting Wi-Fi connection...");
+  const char* tag = "[SyncTime]";
+  Serial.printf("%s Starting Wi-Fi connection...\n", tag);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -108,28 +109,28 @@ void taskSyncTime(void* pvParameters) {
     // Serial.printf("%d_%d", WiFi.status(), WiFi.isConnected());
     Serial.print(".");
   }
-  Serial.println("\n[Sync] WiFi Connected.");
+  Serial.printf("\n%s WiFi Connected.\n", tag);
 
   // Configure the ESP32 internal system time
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  Serial.println("[Sync] Synchronizing with NTP server...");
+  Serial.printf("%s Synchronizing with NTP server...\n", tag);
 
   struct tm timeinfo;
   // Wait until time is actually retrieved from the network
   while (!getLocalTime(&timeinfo)) {
     vTaskDelay(1000 / portTICK_PERIOD_MS);
-    Serial.println("[Sync] Waiting for NTP response...");
+    Serial.printf("%s Waiting for NTP response...\n", tag);
   }
 
-  Serial.println("[Sync] System Time Synchronized!");
+  Serial.printf("%s System Time Synchronized!\n", tag);
 
   // Disconnect WiFi to save power after sync
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
-  Serial.println("[Sync] WiFi turned off.");
+  Serial.printf("%s WiFi turned off.\n", tag);
 
   // SUSPEND TASK: The task enters a suspended state.
-  Serial.println("[Sync] Task Suspending now...");
+  Serial.printf("%s Task Suspending now...\n", tag);
   vTaskSuspend(NULL);
 
   // This part of the code is never reached while suspended
@@ -139,6 +140,7 @@ void taskSyncTime(void* pvParameters) {
 // --- TASK: DISPLAY TIME IN SPANISH ---
 void taskDisplayTimeAndWeather(void* pvParameters) {
   struct tm timeinfo;
+  const char* tag = "[Display]";
 
   // Spanish Arrays
   const char* dias[] = { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" };
@@ -150,7 +152,8 @@ void taskDisplayTimeAndWeather(void* pvParameters) {
     if (getLocalTime(&timeinfo)) {
 
       if (!oledOk) {
-        Serial.printf("Fecha: %s, %02d de %s de %04d | Hora: %02d:%02d:%02d\n",
+        Serial.printf("%s Fecha: %s, %02d de %s de %04d | Hora: %02d:%02d:%02d\n",
+                      tag,
                       dias[timeinfo.tm_wday],
                       timeinfo.tm_mday,
                       meses[timeinfo.tm_mon],
@@ -162,7 +165,7 @@ void taskDisplayTimeAndWeather(void* pvParameters) {
         // TODO: Display in screen
       }
     } else {
-      Serial.println("[Display] Waiting for system clock to be set...");
+      Serial.printf("%s Waiting for system clock to be set...\n", tag);
     }
 
     // Refresh display every 1 second
