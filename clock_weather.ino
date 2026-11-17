@@ -56,14 +56,15 @@ void setup() {
 
   Wire.begin(I2C_SDA, I2C_SCL);
   oledOk = initOled();
-  Serial.println(oledOk ? F("OLED detectada en 0x3C")
-                        : F("OLED no responde (revisa SDA=GPIO8, SCL=GPIO9, VCC, GND); sigo por serial"));
+  Serial.println(oledOk ? F("OLED detected at 0x3C")
+                        : F("OLED unavailable (check SDA=GPIO8, SCL=GPIO9, VCC, GND); Serial will be used instead"));
 
   // Create Mutex for Wifi
   wifiMutex = xSemaphoreCreateMutex();
 
   if (wifiMutex == NULL) {
     Serial.println("Error creating WiFi mutex!");
+    Serial.println("STOPPING!");
     return;
   }
 
