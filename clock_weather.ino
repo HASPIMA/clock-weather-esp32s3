@@ -29,10 +29,15 @@ bool initOled() {
   return true;
 }
 
-// --- WiFi/NTP Configuration ---
+// --- Networking Configuration ---
 // The ESP32 only works on 2.4 GHz
 const char* ssid = "WIFI4614";
-const char* password = "hrey4868+";
+const char* password = "nxfw9794(";
+
+// Since wifi is global we may need to protect its access.
+// Maybe this won't be necessary in the future if we do it in parallel
+SemaphoreHandle_t wifiMutex;
+
 
 // Time settings: GMT-5, No DST
 const char* ntpServer = "pool.ntp.org";
@@ -54,8 +59,17 @@ void setup() {
   Serial.println(oledOk ? F("OLED detectada en 0x3C")
                         : F("OLED no responde (revisa SDA=GPIO8, SCL=GPIO9, VCC, GND); sigo por serial"));
 
-  // Pantalla de inicio: logo con barra de carga (solo si hay OLED)
+  // Create Mutex for Wifi
+  wifiMutex = xSemaphoreCreateMutex();
+
+  if (wifiMutex == NULL) {
+    Serial.println("Error creating WiFi mutex!");
+    return;
+  }
+
+  // Splash screen
   if (oledOk) showSplash(display);
+
 
   // 1. Create Synchronization Task (Higher priority, Core 1)
   xTaskCreatePinnedToCore(
