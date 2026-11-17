@@ -84,13 +84,13 @@ Weather data comes from [Open-Meteo](https://open-meteo.com/) (no API key needed
 
 ### Source files
 
-| File                                  | Contents                                                                  |
-| ------------------------------------- | ------------------------------------------------------------------------- |
-| `clock_weather.ino`                   | Configuration, setup, mutexes and the FreeRTOS tasks                      |
-| `wifi_utils.h` / `wifi_utils.cpp`     | `wifiConnect()` / `wifiOff()` and the credentials from `wifi.txt`         |
-| `weather.h` / `weather.cpp`           | `WeatherData`, `fetchWeather()` (HTTPS + JSON parsing), `hourlyMinMax()`  |
-| `display_utils.h` / `display_utils.cpp` | `printTemp()` and `drawHourlyChart()` for the OLED                      |
-| `splash.h`                            | Startup logo and loading bar                                              |
+| File                                    | Contents                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| `clock_weather.ino`                     | Configuration, setup, mutexes and the FreeRTOS tasks                      |
+| `wifi_utils.h` / `wifi_utils.cpp`       | `wifiConnect()` / `wifiOff()` and the credentials from `wifi.txt`         |
+| `weather.h` / `weather.cpp`             | `WeatherData`, `fetchWeather()` (HTTPS + JSON parsing), `hourlyMinMax()`  |
+| `display_utils.h` / `display_utils.cpp` | `printTemp()` and `drawHourlyChart()` for the OLED                        |
+| `splash.h`                              | Startup logo and loading bar                                              |
 
 ### Tasks
 
