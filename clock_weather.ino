@@ -101,12 +101,16 @@ void loop() {
 // --- TASK: CONNECT WIFI & SYNC NTP ---
 void taskSyncTime(void* pvParameters) {
   const char* tag = "[SyncTime]";
+
+  while (xSemaphoreTake(wifiMutex, pdMS_TO_TICKS(100)) == pdFALSE) {
+    Serial.printf("%s Could not acquire mutex to write\n", tag);
+  }
+
   Serial.printf("%s Starting Wi-Fi connection...\n", tag);
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    // Serial.printf("%d_%d", WiFi.status(), WiFi.isConnected());
     Serial.print(".");
   }
   Serial.printf("\n%s WiFi Connected.\n", tag);
@@ -128,6 +132,10 @@ void taskSyncTime(void* pvParameters) {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   Serial.printf("%s WiFi turned off.\n", tag);
+
+  // Always release after disconnecting (We may not need to disconnect at all)
+  Serial.printf("%s Releasing WiFi mutex\n", tag);
+  xSemaphoreGive(wifiMutex);
 
   // SUSPEND TASK: The task enters a suspended state.
   Serial.printf("%s Task Suspending now...\n", tag);
